@@ -7,15 +7,17 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using MedicalClinic.Data;
 using MedicalClinic.Models;
+using Microsoft.AspNetCore.Identity;
 
 namespace MedicalClinic.Controllers
 {
     public class VisitsController : Controller
     {
         private readonly ApplicationDbContext _context;
-
-        public VisitsController(ApplicationDbContext context)
+        private readonly UserManager<ApplicationUser> _userManager;
+        public VisitsController(UserManager<ApplicationUser> userManager, ApplicationDbContext context)
         {
+            _userManager = userManager;
             _context = context;
         }
 
@@ -47,6 +49,33 @@ namespace MedicalClinic.Controllers
         public IActionResult Create()
         {
             return View();
+        }
+
+        public async Task<IActionResult> Book()
+        {
+            var users = await _userManager.Users.ToListAsync();
+            var doctors = new List<ApplicationUser>();
+            foreach (ApplicationUser user in users)
+            {
+                var roles = await GetUserRoles(user);
+
+                if (roles.Contains("Doctor")) 
+                {
+                    doctors.Add(user);
+                }
+            }
+            return View(doctors);
+        }
+
+        public IActionResult BookDoctor()
+        {
+            return View();
+        }
+
+
+        private async Task<List<string>> GetUserRoles(ApplicationUser user)
+        {
+            return new List<string>(await _userManager.GetRolesAsync(user));
         }
 
         // POST: Visits/Create

@@ -1,5 +1,4 @@
 ﻿@model MedicalClinic.Models.Visit
-
 @{
     ViewData["Title"] = "Create";
 }
@@ -12,38 +11,7 @@
     <div class="col-md-4">
         <form asp-action="Create">
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
-            <div class="form-group">
-                <label asp-for="DoctorId" class="control-label"></label>
-                <input asp-for="DoctorId" class="form-control" />
-                <span asp-validation-for="DoctorId" class="text-danger"></span>
-            </div>
 
-
-
-            <div class="dropdown">
-                <button onclick="myFunction()" class="dropbtn">Dropdown</button>
-                <div id="myDropdown" class="dropdown-content">
-                    <input type="text" placeholder="Search.." id="myInput" onkeyup="filterFunction()">
-                    <a href="#about">About</a>
-                    <a href="#base">Base</a>
-                    <a href="#blog">Blog</a>
-                    <a href="#contact">Contact</a>
-                    <a href="#custom">Custom</a>
-                    <a href="#support">Support</a>
-                    <a href="#tools">Tools</a>
-                </div>
-            </div>
-
-            <div class="form-group">
-                <label asp-for="Date" class="control-label"></label>
-                <input asp-for="Date" class="form-control" />
-                <span asp-validation-for="Date" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="VisitTimeInMinutes" class="control-label"></label>
-                <input asp-for="VisitTimeInMinutes" class="form-control" />
-                <span asp-validation-for="VisitTimeInMinutes" class="text-danger"></span>
-            </div>
             <div class="form-group">
                 <input type="submit" value="Create" class="btn btn-primary" />
             </div>
