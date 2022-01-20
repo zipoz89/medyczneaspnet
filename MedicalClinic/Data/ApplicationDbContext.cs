@@ -49,6 +49,8 @@ namespace MedicalClinic.Data
             });
         }
 
-        public DbSet<MedicalClinic.Models.Visit> Visit { get; set; }
+        public DbSet<MedicalClinic.Models.Appointment> Appointment { get; set; }
+
+        
     }
 }

@@ -1,0 +1,30 @@
+﻿@model List<ApplicationUser>
+@{
+    ViewData["Title"] = "Home Page";
+}
+
+<div class="text-center">
+    <h1 class="display-4">Choose your doctor</h1>
+    <div class="row">
+        @{
+            foreach (var doctor in Model)
+            {
+                <div class="card col-md-4">
+                    <div class="card-body">
+                        <a class="fill-div" style="color: #000000; text-decoration: none;" asp-area="" asp-controller="Appointments" asp-route-userId="@doctor.Id" asp-action="BookDoctor">
+                            @if (doctor.ProfilePicture != null)
+                            {
+                                <img style="width:120px;height:120px ; img-fluid; border-radius:30px" src="data:image/*;base64,@(Convert.ToBase64String(doctor.ProfilePicture))">
+                            }
+
+                            <h1 class="display-4">
+                                @("DR. " + doctor.FirstName + " " + doctor.LastName)
+                            </h1>
+                        </a>
+                    </div>
+                </div>
+            }
+        }
+    </div>
+    <p>Learn about <a href="https://docs.microsoft.com/aspnet/core">building Web apps with ASP.NET Core</a>.</p>
+</div>

@@ -97,10 +97,12 @@ namespace MedicalClinic.Migrations
                     b.ToTable("User");
                 });
 
-            modelBuilder.Entity("MedicalClinic.Models.Visit", b =>
+            modelBuilder.Entity("MedicalClinic.Models.Appointment", b =>
                 {
-                    b.Property<string>("Id")
-                        .HasColumnType("nvarchar(450)");
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
                     b.Property<DateTime>("Date")
                         .HasColumnType("datetime2");
@@ -108,18 +110,15 @@ namespace MedicalClinic.Migrations
                     b.Property<string>("DoctorId")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<string>("PatiendId")
+                    b.Property<string>("PatientId")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<string>("VisitReason")
+                    b.Property<string>("Reason")
                         .HasColumnType("nvarchar(max)");
-
-                    b.Property<int>("VisitTimeInMinutes")
-                        .HasColumnType("int");
 
                     b.HasKey("Id");
 
-                    b.ToTable("Visit");
+                    b.ToTable("Appointment");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRole", b =>

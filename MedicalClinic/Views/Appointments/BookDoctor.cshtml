@@ -1,4 +1,4 @@
-﻿@model Visit
+﻿@model Appointment
 
 <h1>
     @if (ViewBag.doctorPhoto != null)
@@ -7,7 +7,5 @@
     }
     @ViewBag.doctorName
 
-    <a class="btn btn-primary" asp-controller="Visits" asp-action="Create">Visits</a>
+    <a class="btn btn-primary" asp-controller="Appointments" asp-action="Create">Book</a>
 </h1>
-
-
