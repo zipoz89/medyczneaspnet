@@ -7,13 +7,15 @@ namespace MedicalClinic.Models
 {
     public class Visit
     {
-        public int Id { get; set; }
-        public int PatiendId { get; set; }
-        public int DoctorId { get; set; }
+        public string Id { get; set; }
+        public string PatiendId { get; set; }
+        public string DoctorId { get; set; }
 
         public DateTime Date { get; set; }
 
         public int VisitTimeInMinutes { get; set; }
+
+        public string VisitReason { get; set; }
 
         public Visit()
         {

@@ -99,19 +99,20 @@ namespace MedicalClinic.Migrations
 
             modelBuilder.Entity("MedicalClinic.Models.Visit", b =>
                 {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int")
-                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+                    b.Property<string>("Id")
+                        .HasColumnType("nvarchar(450)");
 
                     b.Property<DateTime>("Date")
                         .HasColumnType("datetime2");
 
-                    b.Property<int>("DoctorId")
-                        .HasColumnType("int");
+                    b.Property<string>("DoctorId")
+                        .HasColumnType("nvarchar(max)");
 
-                    b.Property<int>("PatiendId")
-                        .HasColumnType("int");
+                    b.Property<string>("PatiendId")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("VisitReason")
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<int>("VisitTimeInMinutes")
                         .HasColumnType("int");

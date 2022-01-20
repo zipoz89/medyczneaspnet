@@ -28,7 +28,7 @@ namespace MedicalClinic.Controllers
         }
 
         // GET: Visits/Details/5
-        public async Task<IActionResult> Details(int? id)
+        public async Task<IActionResult> Details(string id)
         {
             if (id == null)
             {
@@ -67,9 +67,21 @@ namespace MedicalClinic.Controllers
             return View(doctors);
         }
 
-        public IActionResult BookDoctor()
+        public async Task<IActionResult> BookDoctor(string userId)
         {
-            return View();
+            var users = await _userManager.Users.ToListAsync();
+
+            foreach (var item in users)
+            {
+                if (userId == item.Id)
+                {
+                    ViewBag.doctorName = item.FirstName + " " + item.LastName;
+                    ViewBag.doctorPhoto = item.ProfilePicture;
+                }
+            }
+            Visit model = new Visit();
+            model.DoctorId = userId;
+            return View(model);
         }
 
 
@@ -115,7 +127,7 @@ namespace MedicalClinic.Controllers
         // more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("Id,PatiendId,DoctorId,Date,VisitTimeInMinutes")] Visit visit)
+        public async Task<IActionResult> Edit(string id, [Bind("Id,PatiendId,DoctorId,Date,VisitTimeInMinutes")] Visit visit)
         {
             if (id != visit.Id)
             {
@@ -146,7 +158,7 @@ namespace MedicalClinic.Controllers
         }
 
         // GET: Visits/Delete/5
-        public async Task<IActionResult> Delete(int? id)
+        public async Task<IActionResult> Delete(string? id)
         {
             if (id == null)
             {
@@ -174,7 +186,7 @@ namespace MedicalClinic.Controllers
             return RedirectToAction(nameof(Index));
         }
 
-        private bool VisitExists(int id)
+        private bool VisitExists(string id)
         {
             return _context.Visit.Any(e => e.Id == id);
         }
