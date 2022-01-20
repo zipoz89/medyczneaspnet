@@ -39,32 +39,46 @@ namespace MedicalClinic.Controllers
             return View(doctors);
         }
 
-        public async Task<IActionResult> BookDoctor(string userId)
-        {
-            var users = await _userManager.Users.ToListAsync();
-
-            foreach (var item in users)
-            {
-                if (userId == item.Id)
-                {
-                    ViewBag.doctorName = item.FirstName + " " + item.LastName;
-                    ViewBag.doctorPhoto = item.ProfilePicture;
-                }
-            }
-            Appointment model = new Appointment();
-            model.DoctorId = userId;
-            return View(model);
-        }
 
         private async Task<List<string>> GetUserRoles(ApplicationUser user)
         {
             return new List<string>(await _userManager.GetRolesAsync(user));
         }
 
+        private string GetDoctorFullnameById(string doctorId)
+        {
+            string fullName = "";
+
+            fullName += "DR. " + GetUserById(doctorId).Result.FirstName + " " + GetUserById(doctorId).Result.LastName;
+
+            return fullName;
+        }
+
+        private async Task<ApplicationUser> GetCurrentUser() 
+        {
+            return await _userManager.GetUserAsync(HttpContext.User);
+        }
+
+        private async Task<ApplicationUser> GetUserById(string userId) 
+        {
+            return await _userManager.FindByIdAsync(userId);
+        }
+
         // GET: Appointments
         public async Task<IActionResult> Index()
         {
-            return View(await _context.Appointment.ToListAsync());
+            var appointmentListWithDoctorName = new List<Tuple<String, Appointment>>();
+            var appointmentList = await _context.Appointment.ToListAsync();
+            for (int i = 0; i < appointmentList.Count; i++)
+            {
+                if (appointmentList[i].PatientId == GetCurrentUser().Result.Id) 
+                {
+                    Tuple<String, Appointment> appointment = new Tuple<String, Appointment>(GetDoctorFullnameById(appointmentList[i].DoctorId), appointmentList[i]);
+                    appointmentListWithDoctorName.Add(appointment);
+                }
+            }
+
+            return View(appointmentListWithDoctorName);
         }
 
         // GET: Appointments/Details/5
@@ -82,7 +96,9 @@ namespace MedicalClinic.Controllers
                 return NotFound();
             }
 
-            return View(appointment);
+
+            Tuple<String, Appointment> detailsWithDoctorName = new Tuple<string, Appointment>(GetDoctorFullnameById(appointment.DoctorId), appointment);
+            return View(detailsWithDoctorName);
         }
 
 

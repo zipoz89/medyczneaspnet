@@ -1,22 +1,22 @@
-﻿@model IEnumerable<MedicalClinic.Models.Appointment>
+﻿@model List<Tuple<String, Appointment>>
 
 @{
     ViewData["Title"] = "Appointments";
 }
 
-<h1>Appointments</h1>
+<h1>Your Booked Appointments</h1>
 
 <table class="table">
     <thead>
         <tr>
             <th>
-                @Html.DisplayNameFor(model => model.DoctorId)
+                Doctor
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.Reason)
+                Reason
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.Date)
+                Date
             </th>
             <th></th>
         </tr>
@@ -25,17 +25,17 @@
 @foreach (var item in Model) {
         <tr>
             <td>
-                @Html.DisplayFor(modelItem => item.DoctorId)
+                @Html.DisplayFor(modelItem => item.Item1)
             </td>
             <td>
-                @Html.DisplayFor(modelItem => item.Reason)
+                @Html.DisplayFor(modelItem => item.Item2.Reason)
             </td>
             <td>
-                @Html.DisplayFor(modelItem => item.Date)
+                @Html.DisplayFor(modelItem => item.Item2.Date)
             </td>
             <td>
-                <a asp-action="Details" asp-route-id="@item.Id">Details</a> |
-                <a asp-action="Delete" asp-route-id="@item.Id">Delete</a>
+                <a asp-action="Details" asp-route-id="@item.Item2.Id">Details</a> |
+                <a asp-action="Delete" asp-route-id="@item.Item2.Id">Delete</a>
             </td>
         </tr>
 }
