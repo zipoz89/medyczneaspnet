@@ -31,6 +31,12 @@
                                 <a class="nav-link text-dark" asp-area="" asp-controller="Appointments" asp-action="Book">Book a Visit</a>
                             </li>
                         }
+                        @if (User.Identity.IsAuthenticated)
+                        {
+                            <li class="nav-item">
+                                <a class="nav-link text-dark" asp-area="" asp-controller="Appointments" asp-action="Index">My Appointments</a>
+                            </li>
+                        }
                         @if (User.IsInRole("SuperAdmin"))
                         {
                             <li class="nav-item">

@@ -88,9 +88,22 @@ namespace MedicalClinic.Controllers
 
 
         // GET: Appointments/Create
-        public IActionResult Create()
+        public async Task<IActionResult> Create(string doctorId)
         {
-            return View();
+            var users = await _userManager.Users.ToListAsync();
+
+            foreach (var item in users)
+            {
+                if (doctorId == item.Id)
+                {
+                    ViewBag.doctorId = doctorId;
+                    ViewBag.doctorName = item.FirstName + " " + item.LastName;
+                    ViewBag.doctorPhoto = item.ProfilePicture;
+                }
+            }
+            Appointment model = new Appointment();
+            model.DoctorId = doctorId;
+            return View(model);
         }
 
         // POST: Appointments/Create
@@ -98,8 +111,11 @@ namespace MedicalClinic.Controllers
         // more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Id,DoctorId,PatientId,Reason,Date")] Appointment appointment)
+        public async Task<IActionResult> Create([Bind("Id,DoctorId,PatientId,Reason,Date")] Appointment appointment,string doctorId)
         {
+            var user = await _userManager.GetUserAsync(HttpContext.User);
+            appointment.PatientId = user.Id;
+            appointment.DoctorId = doctorId;
             if (ModelState.IsValid)
             {
                 _context.Add(appointment);
