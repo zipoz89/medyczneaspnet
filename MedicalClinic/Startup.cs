@@ -33,6 +33,12 @@ namespace MedicalClinic
             .AddEntityFrameworkStores<ApplicationDbContext>()
             .AddDefaultUI()
             .AddDefaultTokenProviders();
+
+            services.AddAuthentication().AddGoogle(options =>
+            {
+                options.ClientId = Configuration["App:GoogleClientId"];
+                options.ClientSecret = Configuration["App:GoogleClientSecret"];
+            });
             services.AddControllersWithViews();
             services.AddRazorPages();
         }
