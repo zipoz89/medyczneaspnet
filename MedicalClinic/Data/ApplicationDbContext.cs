@@ -48,5 +48,9 @@ namespace MedicalClinic.Data
                 entity.ToTable("UserTokens");
             });
         }
+
+        public DbSet<MedicalClinic.Models.Appointment> Appointment { get; set; }
+
+        
     }
 }
