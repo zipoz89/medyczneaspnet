@@ -4,29 +4,28 @@
     ViewData["Title"] = "Delete";
 }
 
-<h1>Cancel</h1>
+<h1>Managing Appointment</h1>
 
-<h3>Are you sure you want to cancel this appointment?</h3>
 <div>
     <hr />
     <dl class="row">
-        <dt class = "col-sm-2">
+        <dt class="col-sm-2">
             @Html.DisplayNameFor(model => model.Reason)
         </dt>
-        <dd class = "col-sm-10">
+        <dd class="col-sm-10">
             @Html.DisplayFor(model => model.Reason)
         </dd>
-        <dt class = "col-sm-2">
+        <dt class="col-sm-2">
             @Html.DisplayNameFor(model => model.Date)
         </dt>
-        <dd class = "col-sm-10">
+        <dd class="col-sm-10">
             @Html.DisplayFor(model => model.Date)
         </dd>
     </dl>
 
-    <form asp-action="Delete">
+    <form asp-action="Manage">
         <input type="hidden" asp-for="Id" />
-        <input type="submit" value="Cancel" class="btn btn-danger" /> |
-        <a asp-action="Index">Back to List</a>
+        <input type="submit" value="Mark as held" class="btn btn-danger" /> |
+        <a asp-action="Doctor">Back to List</a>
     </form>
 </div>

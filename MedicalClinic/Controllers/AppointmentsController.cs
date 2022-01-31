@@ -49,7 +49,7 @@ namespace MedicalClinic.Controllers
         {
             string fullName = "";
 
-            fullName += "DR. " + GetUserById(doctorId).Result.FirstName + " " + GetUserById(doctorId).Result.LastName;
+            fullName += GetUserById(doctorId).Result.FirstName + " " + GetUserById(doctorId).Result.LastName;
 
             return fullName;
         }
@@ -73,12 +73,29 @@ namespace MedicalClinic.Controllers
             {
                 if (appointmentList[i].PatientId == GetCurrentUser().Result.Id) 
                 {
-                    Tuple<String, Appointment> appointment = new Tuple<String, Appointment>(GetDoctorFullnameById(appointmentList[i].DoctorId), appointmentList[i]);
+                    Tuple<String, Appointment> appointment = new Tuple<String, Appointment>("DR. " + GetDoctorFullnameById(appointmentList[i].DoctorId), appointmentList[i]);
                     appointmentListWithDoctorName.Add(appointment);
                 }
             }
 
             return View(appointmentListWithDoctorName);
+        }
+
+        // GET: Appointments
+        public async Task<IActionResult> Doctor()
+        {
+            var appointmentListWithPatientName = new List<Tuple<String, Appointment>>();
+            var appointmentList = await _context.Appointment.ToListAsync();
+            for (int i = 0; i < appointmentList.Count; i++)
+            {
+                if (appointmentList[i].DoctorId == GetCurrentUser().Result.Id)
+                {
+                    Tuple<String, Appointment> appointment = new Tuple<String, Appointment>(GetDoctorFullnameById(appointmentList[i].PatientId), appointmentList[i]);
+                    appointmentListWithPatientName.Add(appointment);
+                }
+            }
+
+            return View(appointmentListWithPatientName);
         }
 
         // GET: Appointments/Details/5
@@ -210,6 +227,24 @@ namespace MedicalClinic.Controllers
             return View(appointment);
         }
 
+        // GET: Appointments/Delete/5
+        public async Task<IActionResult> Manage(int? id)
+        {
+            if (id == null)
+            {
+                return NotFound();
+            }
+
+            var appointment = await _context.Appointment
+                .FirstOrDefaultAsync(m => m.Id == id);
+            if (appointment == null)
+            {
+                return NotFound();
+            }
+
+            return View(appointment);
+        }
+
         // POST: Appointments/Delete/5
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
@@ -219,6 +254,16 @@ namespace MedicalClinic.Controllers
             _context.Appointment.Remove(appointment);
             await _context.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
+        }
+
+        [HttpPost, ActionName("Manage")]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> ManageConfirmed(int id)
+        {
+            var appointment = await _context.Appointment.FindAsync(id);
+            _context.Appointment.Remove(appointment);
+            await _context.SaveChangesAsync();
+            return RedirectToAction(nameof(Doctor));
         }
 
         private bool AppointmentExists(int id)
