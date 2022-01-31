@@ -1,0 +1,43 @@
+﻿@model List<Tuple<String, Appointment>>
+
+@{
+    ViewData["Title"] = "Appointments";
+}
+
+<h1>Your Booked Appointments</h1>
+
+<table class="table">
+    <thead>
+        <tr>
+            <th>
+                Doctor
+            </th>
+            <th>
+                Reason
+            </th>
+            <th>
+                Date
+            </th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Item1)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Item2.Reason)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Item2.Date)
+                </td>
+                <td>
+                    <a asp-action="VisitNote" asp-route-id="@item.Item2.Id">Check Note</a>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
