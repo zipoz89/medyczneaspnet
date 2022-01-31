@@ -352,6 +352,8 @@ namespace MedicalClinic.Controllers
             {
                 return NotFound();
             }
+            var patient = await GetUserById(appointment.PatientId);
+            ViewBag.PatientAvatar = patient.ProfilePicture;
 
             return View(appointment);
         }
