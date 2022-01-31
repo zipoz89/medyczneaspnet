@@ -10,6 +10,7 @@
 }
 @ViewBag.doctorName
 
+
 <h1>Create</h1>
 
 <h4>Appointment</h4>
@@ -23,7 +24,7 @@
             </div>
             <div class="form-group">
                 <label asp-for="Reason" class="control-label"></label>
-                <input asp-for="Reason" class="form-control" maxlength="50"/>
+                <input asp-for="Reason" class="form-control" maxlength="50" />
                 <span asp-validation-for="Reason" class="text-danger"></span>
             </div>
             <div class="form-group">
@@ -31,16 +32,47 @@
                 <input asp-for="Date" class="form-control" value="@DateTime.Today" />
                 <span asp-validation-for="Date" class="text-danger"></span>
             </div>
+            @if (ViewBag.ValidDate != 0)
+            {
+
+                switch (ViewBag.DateError)
+                {
+                    case 1:
+                        <div class="alert alert-danger" role="alert">
+                            Date must be greater than current date!
+                        </div>
+                        break;
+                    case 2:
+                        <div class="alert alert-danger" role="alert">
+                            At this time clinic is closed!
+                        </div>
+                        break;
+                    case 3:
+                        <div class="alert alert-danger" role="alert">
+                            Date must start at XX:00 or XX:30!
+                        </div>
+                        break;
+                    case 4:
+                        <div class="alert alert-danger" role="alert">
+                            This date is already booked!
+                        </div>
+                        break;
+                    default:
+                        break;
+                }
+
+            }
             <div class="form-group">
                 <input type="submit" value="Create" class="btn btn-primary" />
             </div>
+            <div class="alert alert-info" role="alert">
+                Clinic is open from 9:00 - 17:00
+            </div>
+
         </form>
     </div>
 </div>
 
-<div>
-    <a asp-action="Index">Back to List</a>
-</div>
 
 @section Scripts {
     @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}

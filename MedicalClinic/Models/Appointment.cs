@@ -14,6 +14,7 @@ namespace MedicalClinic.Models
         public string Reason { get; set; }
         public DateTime Date{ get; set; }
 
+        public bool WasHeld { get; set; }
         public Appointment()
         {
 
