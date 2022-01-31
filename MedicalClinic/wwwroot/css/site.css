@@ -59,8 +59,9 @@ html {
 }
 
 body {
-  /* Margin bottom by footer height */
-  margin-bottom: 60px;
+    /* Margin bottom by footer height */
+    margin-bottom: 60px;
+    background-color: #908e32;
 }
 .footer {
   position: absolute;
@@ -68,4 +69,12 @@ body {
   width: 100%;
   white-space: nowrap;
   line-height: 60px; /* Vertically center the text there */
+}
+
+nav .navbar-nav li a {
+    color: white !important;
+}
+
+table, th, td {
+    border: 2px solid red;
 }

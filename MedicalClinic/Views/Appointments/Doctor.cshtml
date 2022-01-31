@@ -4,13 +4,15 @@
     ViewData["Title"] = "Appointments";
 }
 
-<h1>Your Booked Appointments</h1>
+<h1>Your Appointments</h1>
+
+
 
 <table class="table">
     <thead>
         <tr>
             <th>
-                Doctor
+                Patient
             </th>
             <th>
                 Reason
@@ -34,8 +36,7 @@
                 @Html.DisplayFor(modelItem => item.Item2.Date)
             </td>
             <td>
-                <a asp-action="Details" asp-route-id="@item.Item2.Id">Details</a> |
-                <a asp-action="Delete" asp-route-id="@item.Item2.Id">Cancel</a>
+                <a asp-action="Manage" asp-route-id="@item.Item2.Id">Manage</a>
             </td>
         </tr>
 }
