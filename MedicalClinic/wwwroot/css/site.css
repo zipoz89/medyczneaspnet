@@ -78,3 +78,7 @@ nav .navbar-nav li a {
 table, th, td {
     border: 2px solid red;
 }
+
+.card {
+    margin-bottom: 10px;
+}

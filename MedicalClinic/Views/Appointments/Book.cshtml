@@ -3,25 +3,27 @@
     ViewData["Title"] = "Home Page";
 }
 
+<style>
+
+</style>
+
 <div class="text-center">
     <h1 class="display-4">Choose your doctor</h1>
     <div class="row">
         @{
             foreach (var doctor in Model)
             {
-                <div class="card col-md-4">
-                    <div class="card-body">
-                        <a class="fill-div" style="color: #000000; text-decoration: none;" asp-area="" asp-controller="Appointments" asp-route-doctorId="@doctor.Id" asp-action="Create">
-                            @if (doctor.ProfilePicture != null)
-                            {
-                                <img style="width:120px;height:120px ; img-fluid; border-radius:30px" src="data:image/*;base64,@(Convert.ToBase64String(doctor.ProfilePicture))">
-                            }
+                <div class="card text-white col-md-4 bg-primary">
+                            <div class="card-body">
+                                        <h5 class="card-header" style="color:white">@("DR. " + doctor.FirstName + " " + doctor.LastName)</h5>
+                                <a class="fill-div" style="color: #000000; text-decoration: none;" asp-area="" asp-controller="Appointments" asp-route-doctorId="@doctor.Id" asp-action="Create">
+                                    @if (doctor.ProfilePicture != null)
+                                    {
+                                        <img class="card-img-top" src="data:image/*;base64,@(Convert.ToBase64String(doctor.ProfilePicture))">
+                                    }
 
-                            <h1 class="display-4">
-                                @("DR. " + doctor.FirstName + " " + doctor.LastName)
-                            </h1>
-                        </a>
-                    </div>
+                                </a>
+                            </div>
                 </div>
             }
         }
