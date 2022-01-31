@@ -81,6 +81,23 @@ namespace MedicalClinic.Controllers
             return View(appointmentListWithDoctorName);
         }
 
+        // GET: held Appointments
+        public async Task<IActionResult> HeldVisits()
+        {
+            var appointmentListWithDoctorName = new List<Tuple<String, Appointment>>();
+            var appointmentList = await _context.Appointment.ToListAsync();
+            for (int i = 0; i < appointmentList.Count; i++)
+            {
+                if (appointmentList[i].PatientId == GetCurrentUser().Result.Id && appointmentList[i].WasHeld)
+                {
+                    Tuple<String, Appointment> appointment = new Tuple<String, Appointment>("DR. " + GetDoctorFullnameById(appointmentList[i].DoctorId), appointmentList[i]);
+                    appointmentListWithDoctorName.Add(appointment);
+                }
+            }
+
+            return View(appointmentListWithDoctorName);
+        }
+
         // GET: Appointments
         public async Task<IActionResult> Doctor()
         {
@@ -118,7 +135,25 @@ namespace MedicalClinic.Controllers
             return View(detailsWithDoctorName);
         }
 
+        // GET: Appointments/Details/5
+        public async Task<IActionResult> VisitNote(int? id)
+        {
+            if (id == null)
+            {
+                return NotFound();
+            }
 
+            var appointment = await _context.Appointment
+                .FirstOrDefaultAsync(m => m.Id == id);
+            if (appointment == null)
+            {
+                return NotFound();
+            }
+
+
+            Tuple<String, Appointment> detailsWithDoctorName = new Tuple<string, Appointment>(GetDoctorFullnameById(appointment.DoctorId), appointment);
+            return View(detailsWithDoctorName);
+        }
 
         // GET: Appointments/Create
         public async Task<IActionResult> Create(string doctorId)
@@ -151,6 +186,7 @@ namespace MedicalClinic.Controllers
             appointment.PatientId = user.Id;
             appointment.DoctorId = doctorId;
             appointment.WasHeld = false;
+            appointment.Note = "";
             var dateValid = await CheckIfDateIsValidAsync(doctorId, appointment.Date);
             if (dateValid!= 0)
             {
@@ -344,10 +380,11 @@ namespace MedicalClinic.Controllers
 
         [HttpPost, ActionName("Manage")]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> ManageConfirmed(int id)
+        public async Task<IActionResult> ManageConfirmed(int id,string note)
         {
             var appointment = await _context.Appointment.FindAsync(id);
             appointment.WasHeld = true;
+            appointment.Note = note;
             await _context.SaveChangesAsync();
             return RedirectToAction(nameof(Doctor));
         }

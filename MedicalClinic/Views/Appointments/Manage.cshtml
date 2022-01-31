@@ -24,6 +24,11 @@
     </dl>
 
     <form asp-action="Manage">
+        <div class="form-group">
+            <label asp-for="Note" class="control-label"></label>
+            <input asp-for="Note" name="note" class="form-control" maxlength="200" />
+            <span asp-validation-for="Note" class="text-danger"></span>
+        </div>
         <input type="hidden" asp-for="Id" />
         <input type="submit" value="Mark as held" class="btn btn-success" /> |
         <a asp-action="Doctor">Back to List</a>
