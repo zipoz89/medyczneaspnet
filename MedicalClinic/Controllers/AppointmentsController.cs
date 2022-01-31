@@ -54,12 +54,12 @@ namespace MedicalClinic.Controllers
             return fullName;
         }
 
-        private async Task<ApplicationUser> GetCurrentUser() 
+        private async Task<ApplicationUser> GetCurrentUser()
         {
             return await _userManager.GetUserAsync(HttpContext.User);
         }
 
-        private async Task<ApplicationUser> GetUserById(string userId) 
+        private async Task<ApplicationUser> GetUserById(string userId)
         {
             return await _userManager.FindByIdAsync(userId);
         }
@@ -71,7 +71,7 @@ namespace MedicalClinic.Controllers
             var appointmentList = await _context.Appointment.ToListAsync();
             for (int i = 0; i < appointmentList.Count; i++)
             {
-                if (appointmentList[i].PatientId == GetCurrentUser().Result.Id) 
+                if (appointmentList[i].PatientId == GetCurrentUser().Result.Id && !appointmentList[i].WasHeld)
                 {
                     Tuple<String, Appointment> appointment = new Tuple<String, Appointment>("DR. " + GetDoctorFullnameById(appointmentList[i].DoctorId), appointmentList[i]);
                     appointmentListWithDoctorName.Add(appointment);
@@ -88,7 +88,7 @@ namespace MedicalClinic.Controllers
             var appointmentList = await _context.Appointment.ToListAsync();
             for (int i = 0; i < appointmentList.Count; i++)
             {
-                if (appointmentList[i].DoctorId == GetCurrentUser().Result.Id)
+                if (appointmentList[i].DoctorId == GetCurrentUser().Result.Id && !appointmentList[i].WasHeld)
                 {
                     Tuple<String, Appointment> appointment = new Tuple<String, Appointment>(GetDoctorFullnameById(appointmentList[i].PatientId), appointmentList[i]);
                     appointmentListWithPatientName.Add(appointment);
@@ -134,6 +134,7 @@ namespace MedicalClinic.Controllers
                     ViewBag.doctorPhoto = item.ProfilePicture;
                 }
             }
+            ViewBag.DateError = 0;
             Appointment model = new Appointment();
             model.DoctorId = doctorId;
             return View(model);
@@ -144,11 +145,30 @@ namespace MedicalClinic.Controllers
         // more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Id,DoctorId,PatientId,Reason,Date")] Appointment appointment,string doctorId)
+        public async Task<IActionResult> Create([Bind("Id,DoctorId,PatientId,Reason,Date")] Appointment appointment, string doctorId)
         {
             var user = await _userManager.GetUserAsync(HttpContext.User);
             appointment.PatientId = user.Id;
             appointment.DoctorId = doctorId;
+            appointment.WasHeld = false;
+            var dateValid = await CheckIfDateIsValidAsync(doctorId, appointment.Date);
+            if (dateValid!= 0)
+            {
+                Appointment model = new Appointment();
+                model.DoctorId = doctorId;
+                var users = await _userManager.Users.ToListAsync();
+                foreach (var item in users)
+                {
+                    if (doctorId == item.Id)
+                    {
+                        ViewBag.doctorId = doctorId;
+                        ViewBag.doctorName = item.FirstName + " " + item.LastName;
+                        ViewBag.doctorPhoto = item.ProfilePicture;
+                        ViewBag.DateError = dateValid;
+                    }
+                }
+                return View(model);
+            }
             if (ModelState.IsValid)
             {
                 _context.Add(appointment);
@@ -157,6 +177,44 @@ namespace MedicalClinic.Controllers
             }
             return View(appointment);
         }
+
+        private async Task<int> CheckIfDateIsValidAsync(string doctorId, DateTime date)
+        {
+            System.Diagnostics.Debug.WriteLine(date.Hour + " " +date.Minute);
+            if (date.CompareTo(DateTime.Today) <= 0)
+            {
+                System.Diagnostics.Debug.WriteLine("later than today");
+                return 1;
+            }
+
+            if (date.Hour < 9 || date.Hour > 17) 
+            {
+                System.Diagnostics.Debug.WriteLine("clinc is closed");
+                return 2;
+            }
+            if (date.Minute != 0 && date.Minute != 30) 
+            {
+                System.Diagnostics.Debug.WriteLine("must be 0 or 30");
+                return 3;
+            }
+
+            var appointmentList = await _context.Appointment.ToListAsync();
+            for (int i = 0; i < appointmentList.Count; i++)
+            {
+                if (appointmentList[i].DoctorId == doctorId)
+                {
+                    if((date.CompareTo(appointmentList[i].Date) >= 0) && (date.CompareTo(appointmentList[i].Date.AddMinutes(30)) <= 0))
+                        return 4;
+                }
+            }
+
+
+            return 0;
+        }
+
+
+
+
 
         // GET: Appointments/Edit/5
         public async Task<IActionResult> Edit(int? id)
@@ -227,6 +285,23 @@ namespace MedicalClinic.Controllers
             return View(appointment);
         }
 
+        public async Task<IActionResult> DeleteDoctor(int? id)
+        {
+            if (id == null)
+            {
+                return NotFound();
+            }
+
+            var appointment = await _context.Appointment
+                .FirstOrDefaultAsync(m => m.Id == id);
+            if (appointment == null)
+            {
+                return NotFound();
+            }
+
+            return View(appointment);
+        }
+
         // GET: Appointments/Delete/5
         public async Task<IActionResult> Manage(int? id)
         {
@@ -256,12 +331,23 @@ namespace MedicalClinic.Controllers
             return RedirectToAction(nameof(Index));
         }
 
+        // POST: Appointments/Delete/5
+        [HttpPost, ActionName("DeleteDoctor")]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> DeleteDoctorConfirmed(int id)
+        {
+            var appointment = await _context.Appointment.FindAsync(id);
+            _context.Appointment.Remove(appointment);
+            await _context.SaveChangesAsync();
+            return RedirectToAction(nameof(Doctor));
+        }
+
         [HttpPost, ActionName("Manage")]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> ManageConfirmed(int id)
         {
             var appointment = await _context.Appointment.FindAsync(id);
-            _context.Appointment.Remove(appointment);
+            appointment.WasHeld = true;
             await _context.SaveChangesAsync();
             return RedirectToAction(nameof(Doctor));
         }

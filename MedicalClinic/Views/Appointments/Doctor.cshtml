@@ -36,7 +36,8 @@
                 @Html.DisplayFor(modelItem => item.Item2.Date)
             </td>
             <td>
-                <a asp-action="Manage" asp-route-id="@item.Item2.Id">Manage</a>
+                <a asp-action="Manage" asp-route-id="@item.Item2.Id">Manage</a> |
+                <a asp-action="DeleteDoctor" asp-route-id="@item.Item2.Id">Delete</a>
             </td>
         </tr>
 }
